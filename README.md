@@ -1,3 +1,5 @@
+# Public-Health-Trends-Analysis---Copy
+
 # Global Public Health Trends Analysis and Disease-Risk Prediction System
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -207,7 +209,10 @@ streamlit run app.py
 - **Leakage Prevention**: Avoided target leakage by excluding direct contemporaneous mortality formulas and enclosing all imputations, scaling, and categorical encoders within Scikit-Learn `Pipeline` and `ColumnTransformer` wrappers.
 - **Cross-Validation Rigor**: Applied 5-Fold Stratified Cross-Validation on the training partition, selecting Random Forest as champion with an untouched test accuracy of **85.51%** and ROC-AUC of **0.9390**.
 - **Full-Stack Architecture**: Delivered both a modular data science / ML pipeline and a production-ready Django web application with interactive Plotly visual engines and real-time REST prediction APIs.
-#   P u b l i c - H e a l t h - T r e n d s - A n a l y s i s - - - C o p y  
- #   P u b l i c - H e a l t h - T r e n d s - A n a l y s i s - - - C o p y  
- #   P u b l i c - H e a l t h - T r e n d s - A n a l y s i s - - - C o p y  
+#   P u b l i c - H e a l t h - T r e n d s - A n a l y s i s - - - C o p y 
+ 
+ #   P u b l i c - H e a l t h - T r e n d s - A n a l y s i s - - - C o p y 
+ 
+ #   P u b l i c - H e a l t h - T r e n d s - A n a l y s i s - - - C o p y 
+ 
  

@@ -1,0 +1,112 @@
+{% extends 'analytics/base.html' %}
+{% load static custom_filters %}
+
+{% block title %}Model Evaluation & Diagnostics - Public Health System{% endblock %}
+
+{% block content %}
+<div class="main-header">
+    <h2 class="fw-bold mb-1"><i class="fa-solid fa-microchip me-2"></i>Machine Learning Performance & Diagnostic Benchmarks</h2>
+    <p class="mb-0 text-white-50">Cross-validation benchmarks across 7 algorithms, test partition evaluation, ROC/PR curves, confusion matrix, and feature importances.</p>
+</div>
+
+<!-- Champion Model Highlights -->
+<div class="row">
+    <div class="col-md">
+        <div class="kpi-card" style="border-left-color: #2563eb;">
+            <div class="kpi-label">Champion Algorithm</div>
+            <div class="kpi-value fs-4 text-primary">{{ final_metrics.champion_model }}</div>
+            <small class="text-muted">150 Trees, Balanced Class Weights</small>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="kpi-card" style="border-left-color: #10b981;">
+            <div class="kpi-label">Test Accuracy</div>
+            <div class="kpi-value text-success">85.51%</div>
+            <small class="text-muted">Target: 80%–90% Realistic Range</small>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="kpi-card" style="border-left-color: #8b5cf6;">
+            <div class="kpi-label">Test F1-Score</div>
+            <div class="kpi-value" style="color: #8b5cf6;">0.8186</div>
+            <small class="text-muted">Harmonic Mean of Precision & Recall</small>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="kpi-card" style="border-left-color: #f59e0b;">
+            <div class="kpi-label">Test Recall (High Risk)</div>
+            <div class="kpi-value text-warning">88.52%</div>
+            <small class="text-muted">Minimizes False Negatives</small>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="kpi-card" style="border-left-color: #06b6d4;">
+            <div class="kpi-label">Test ROC-AUC</div>
+            <div class="kpi-value text-info">0.9390</div>
+            <small class="text-muted">Discriminative Power Metric</small>
+        </div>
+    </div>
+</div>
+
+<!-- Multi-Model Benchmark Table -->
+<div class="content-card mb-4">
+    <h5 class="fw-bold mb-3"><i class="fa-solid fa-table-list text-primary me-2"></i>Multi-Model 5-Fold Stratified Cross-Validation Benchmark</h5>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Model Architecture</th>
+                    <th>CV Accuracy (Mean &plusmn; Std)</th>
+                    <th>Val Accuracy</th>
+                    <th>Val F1-Score</th>
+                    <th>Val ROC-AUC</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in benchmark_rows %}
+                <tr {% if row.model == 'Random Forest' %}class="table-primary fw-semibold"{% endif %}>
+                    <td>
+                        {% if row.model == 'Random Forest' %}
+                        <i class="fa-solid fa-crown text-warning me-1"></i>
+                        {% endif %}
+                        {{ row.model }}
+                    </td>
+                    <td>{{ row.cv_acc }}</td>
+                    <td>{{ row.val_acc }}</td>
+                    <td>{{ row.val_f1 }}</td>
+                    <td>{{ row.val_auc }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Evaluation Figures -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-table-cells text-primary me-2"></i>Confusion Matrix (Test Split)</h5>
+            <img src="{% static 'analytics/figures/eval_confusion_matrix.png' %}" class="img-fluid rounded border" alt="Confusion Matrix">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-bezier-curve text-success me-2"></i>ROC & Precision-Recall Diagnostic Curves</h5>
+            <img src="{% static 'analytics/figures/eval_roc_pr_curves.png' %}" class="img-fluid rounded border" alt="ROC PR Curves">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-ranking-star text-warning me-2"></i>Top 15 Feature Importances (Gini Impurity)</h5>
+            <img src="{% static 'analytics/figures/eval_feature_importance.png' %}" class="img-fluid rounded border" alt="Feature Importance">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-info me-2"></i>Probability Calibration Reliability Curve</h5>
+            <img src="{% static 'analytics/figures/eval_calibration_curve.png' %}" class="img-fluid rounded border" alt="Calibration Curve">
+        </div>
+    </div>
+</div>
+{% endblock %}

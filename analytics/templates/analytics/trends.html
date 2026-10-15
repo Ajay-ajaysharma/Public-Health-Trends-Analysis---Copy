@@ -1,0 +1,63 @@
+{% extends 'analytics/base.html' %}
+
+{% block title %}Longitudinal Trends - Public Health System{% endblock %}
+
+{% block content %}
+<div class="main-header">
+    <h2 class="fw-bold mb-1"><i class="fa-solid fa-chart-line me-2"></i>Longitudinal Multi-Indicator Time-Series Analysis</h2>
+    <p class="mb-0 text-white-50">Examine 24-year epidemiological trajectories (2000–2023) across health outcomes, immunization, clinical workforce, and environmental pollution.</p>
+</div>
+
+<!-- Filter Controls -->
+<div class="content-card">
+    <form method="GET" action="{% url 'trends' %}" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold text-secondary">Select Primary Indicator:</label>
+            <select name="indicator" class="form-select">
+                {% for key, label in indicators %}
+                <option value="{{ key }}" {% if key == selected_indicator %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold text-secondary">Filter WHO Region:</label>
+            <select name="region" class="form-select">
+                {% for r in all_regions %}
+                <option value="{{ r }}" {% if r == selected_region %}selected{% endif %}>{{ r }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold text-secondary">Benchmark Countries (comma-separated):</label>
+            <input type="text" name="countries" class="form-control" value="{{ compare_countries|join:',' }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                <i class="fa-solid fa-filter me-1"></i> Update Trends
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Regional Aggregate Plot -->
+<div class="content-card mb-4">
+    <h5 class="fw-bold mb-3"><i class="fa-solid fa-globe text-primary me-2"></i>Regional Trajectory Analysis (2000–2023)</h5>
+    <div id="regional-trend-container"></div>
+</div>
+
+<!-- Country Level Benchmark Plot -->
+<div class="content-card">
+    <h5 class="fw-bold mb-3"><i class="fa-solid fa-flag text-success me-2"></i>Country-Level Longitudinal Comparison</h5>
+    <div id="country-trend-container"></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const trendData = {{ trend_json|safe }};
+    Plotly.newPlot('regional-trend-container', trendData.data, trendData.layout, {responsive: true});
+
+    const countryTrendData = {{ country_trend_json|safe }};
+    Plotly.newPlot('country-trend-container', countryTrendData.data, countryTrendData.layout, {responsive: true});
+</script>
+{% endblock %}

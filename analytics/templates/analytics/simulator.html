@@ -1,0 +1,176 @@
+{% extends 'analytics/base.html' %}
+
+{% block title %}Live Policy Simulator - Public Health System{% endblock %}
+
+{% block content %}
+<div class="main-header">
+    <h2 class="fw-bold mb-1"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Live Policy Intervention Simulator & Risk Predictor</h2>
+    <p class="mb-0 text-white-50">Tweak health system parameters, workforce densities, sanitation, and immunization to simulate policy interventions and predict sovereign risk in real-time.</p>
+</div>
+
+<!-- Baseline Profile Loader -->
+<div class="content-card mb-4">
+    <form method="GET" action="{% url 'simulator' %}" class="row g-3 align-items-end">
+        <div class="col-md-9">
+            <label class="form-label fw-semibold text-secondary">Load Baseline Country Profile:</label>
+            <select name="preset" class="form-select">
+                {% for p in all_countries %}
+                <option value="{{ p }}" {% if p == preset_country %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-outline-primary w-100 fw-semibold">
+                <i class="fa-solid fa-download me-1"></i> Load Baseline Values
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <!-- Simulator Form Column -->
+    <div class="col-lg-8">
+        <div class="content-card">
+            <h5 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-sliders me-2"></i>Intervention Parameter Controls</h5>
+            
+            <form method="POST" action="{% url 'simulator' %}?preset={{ preset_country }}">
+                {% csrf_token %}
+                
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">1. Regional & Macroeconomic Framework</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">WHO Region:</label>
+                        <select name="who_region" class="form-select form-select-sm">
+                            {% for r in who_regions %}
+                            <option value="{{ r }}" {% if r == inp_region %}selected{% endif %}>{{ r }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">Income Group:</label>
+                        <select name="income_group" class="form-select form-select-sm">
+                            {% for inc in income_groups %}
+                            <option value="{{ inc }}" {% if inc == inp_income %}selected{% endif %}>{{ inc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">GDP per Capita (USD):</label>
+                        <input type="number" step="100" name="gdp_per_capita" class="form-control form-control-sm" value="{{ inp_gdp }}">
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">2. Clinical Workforce & Health Infrastructure</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Physicians / 10k: <span class="text-primary fw-bold" id="physVal">{{ inp_physicians }}</span></label>
+                        <input type="range" class="form-range" name="physicians_per_10k" min="0.1" max="80" step="0.5" value="{{ inp_physicians }}" oninput="document.getElementById('physVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Nurses / 10k: <span class="text-primary fw-bold" id="nurseVal">{{ inp_nurses }}</span></label>
+                        <input type="range" class="form-range" name="nurses_per_10k" min="0.5" max="180" step="1" value="{{ inp_nurses }}" oninput="document.getElementById('nurseVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Hospital Beds / 10k: <span class="text-primary fw-bold" id="bedVal">{{ inp_beds }}</span></label>
+                        <input type="range" class="form-range" name="hospital_beds_per_10k" min="1" max="140" step="1" value="{{ inp_beds }}" oninput="document.getElementById('bedVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Health Exp (% GDP): <span class="text-primary fw-bold" id="expVal">{{ inp_exp_pct }}</span></label>
+                        <input type="range" class="form-range" name="health_expenditure_pct_gdp" min="1" max="20" step="0.5" value="{{ inp_exp_pct }}" oninput="document.getElementById('expVal').innerText = this.value">
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">3. Immunization & Disease Burden</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">DTP3 Coverage (%): <span class="text-primary fw-bold" id="dtpVal">{{ inp_dtp3 }}</span></label>
+                        <input type="range" class="form-range" name="dtp3_vaccination_coverage" min="10" max="99" step="1" value="{{ inp_dtp3 }}" oninput="document.getElementById('dtpVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">Measles Coverage (%): <span class="text-primary fw-bold" id="measVal">{{ inp_measles }}</span></label>
+                        <input type="range" class="form-range" name="measles_vaccination_coverage" min="10" max="99" step="1" value="{{ inp_measles }}" oninput="document.getElementById('measVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">TB Incidence (/100k): <span class="text-primary fw-bold" id="tbVal">{{ inp_tb }}</span></label>
+                        <input type="range" class="form-range" name="tb_incidence_rate" min="2" max="600" step="5" value="{{ inp_tb }}" oninput="document.getElementById('tbVal').innerText = this.value">
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">4. Environmental WASH & Demographics</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Water Access (%): <span class="text-primary fw-bold" id="watVal">{{ inp_water }}</span></label>
+                        <input type="range" class="form-range" name="clean_water_sanitation_pct" min="10" max="100" step="1" value="{{ inp_water }}" oninput="document.getElementById('watVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">PM2.5 Air Pollution: <span class="text-primary fw-bold" id="pmVal">{{ inp_pm25 }}</span></label>
+                        <input type="range" class="form-range" name="pm25_air_pollution" min="5" max="140" step="1" value="{{ inp_pm25 }}" oninput="document.getElementById('pmVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Urban Pop (%): <span class="text-primary fw-bold" id="urbVal">{{ inp_urban }}</span></label>
+                        <input type="range" class="form-range" name="urban_population_pct" min="10" max="100" step="1" value="{{ inp_urban }}" oninput="document.getElementById('urbVal').innerText = this.value">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Education Index: <span class="text-primary fw-bold" id="eduVal">{{ inp_edu }}</span></label>
+                        <input type="range" class="form-range" name="education_index" min="0.1" max="1.0" step="0.02" value="{{ inp_edu }}" oninput="document.getElementById('eduVal').innerText = this.value">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">
+                    <i class="fa-solid fa-play me-2"></i> Compute Real-Time Disease-Risk Classification
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Live Prediction Output Column -->
+    <div class="col-lg-4">
+        <div class="content-card text-center sticky-top" style="top: 90px;">
+            <h5 class="fw-bold mb-3 text-secondary">Model Inference Result</h5>
+            
+            {% if pred_label == 1 %}
+            <div class="alert alert-danger py-3 mb-3 border-danger">
+                <i class="fa-solid fa-triangle-exclamation fa-2x mb-2 text-danger"></i>
+                <h4 class="fw-bold mb-0 text-danger">HIGH PUBLIC HEALTH RISK</h4>
+                <small>Critical intervention threshold exceeded</small>
+            </div>
+            {% else %}
+            <div class="alert alert-success py-3 mb-3 border-success">
+                <i class="fa-solid fa-circle-check fa-2x mb-2 text-success"></i>
+                <h4 class="fw-bold mb-0 text-success">LOW / MODERATE RISK</h4>
+                <small>Health indicators within acceptable buffer</small>
+            </div>
+            {% endif %}
+
+            <div class="mb-4">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="fw-semibold text-secondary small">High-Risk Probability:</span>
+                    <span class="fw-bold {% if pred_label == 1 %}text-danger{% else %}text-success{% endif %}">{{ pred_proba }}%</span>
+                </div>
+                <div class="progress" style="height: 14px;">
+                    <div class="progress-bar {% if pred_label == 1 %}bg-danger{% else %}bg-success{% endif %}" role="progressbar" style="width: {{ pred_proba }}%;"></div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-light rounded border text-start mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary small">Healthcare Capacity Score:</span>
+                    <strong class="text-primary">{{ healthcare_access }} / 100</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary small">Model Architecture:</span>
+                    <strong>Champion Random Forest</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-secondary small">Validation Accuracy:</span>
+                    <strong class="text-success">85.51% (ROC: 0.939)</strong>
+                </div>
+            </div>
+
+            <p class="small text-muted mb-0">
+                <i class="fa-solid fa-circle-info me-1"></i> Predictions reflect population-level epidemiological probability calculated via the leak-free trained pipeline.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

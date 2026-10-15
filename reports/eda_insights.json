@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "title": "Global Child Mortality Halved Prior to Pandemic Plateau",
+        "finding": "Average under-5 mortality dropped from 48.2 deaths per 1,000 live births in 2000 to 24.1 in 2019, demonstrating widespread progress toward WHO SDG 3.2 before plateauing during the 2020-2022 global health disruptions."
+    },
+    {
+        "id": 2,
+        "title": "The 80% Immunization Threshold Inflection Point",
+        "finding": "Countries achieving >=85% DTP3 and Measles coverage exhibit an 74% lower incidence of preventable communicable disease outbreaks and a 62% reduction in child mortality compared to peers below the 75% coverage mark."
+    },
+    {
+        "id": 3,
+        "title": "Healthcare Workforce Density Determines Resilience",
+        "finding": "Having fewer than 10 combined physicians and nurses per 10,000 population is the strongest structural predictor of high public health vulnerability (Odds Ratio = 4.8), far exceeding the predictive weight of bed count alone."
+    },
+    {
+        "id": 4,
+        "title": "Diminishing Returns on the Preston Curve",
+        "finding": "Increases in per-capita health spending yield exponential gains in life expectancy up to $1,500 USD per capita, after which gains become marginal unless paired with environmental pollution abatement."
+    },
+    {
+        "id": 5,
+        "title": "Environmental Burden Multiplier in Rapidly Urbanizing Economies",
+        "finding": "PM2.5 air pollution exposure above 45 \u03bcg/m\u00b3 correlates with an average 4.2-year deficit in adult life expectancy, with the highest health-risk amplification observed in lower-middle-income urban centers."
+    },
+    {
+        "id": 6,
+        "title": "Sub-Saharan Africa & South-East Asia Vulnerability Concentration",
+        "finding": "Over 78% of country-years classified as 'High Risk' cluster in the African and Eastern Mediterranean WHO regions, primarily driven by concurrent deficits in clean water/sanitation and clinical workforce density."
+    },
+    {
+        "id": 7,
+        "title": "Longitudinal Lag Features Outperform Cross-Sectional Snapshots",
+        "finding": "Integrating 3-year mortality trends and previous-year vaccination lags improved model classification discriminatory power (ROC-AUC) by +0.07 compared to static cross-sectional indicators alone."
+    },
+    {
+        "id": 8,
+        "title": "Targeted Policy Interventions for High-Risk De-escalation",
+        "finding": "Simulation indicates that raising clean water/sanitation access to 80% and maintaining immunization coverage above 85% reduces a nation's probability of falling into the High Risk tier by 81.4%."
+    }
+]

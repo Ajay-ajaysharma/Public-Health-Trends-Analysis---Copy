@@ -1,0 +1,16 @@
+Feature,Importance
+education_index,0.11357538556163509
+health_expenditure_per_capita,0.1084296289725409
+clean_water_sanitation_pct,0.10805696608295029
+healthcare_access_score,0.10025903836613624
+gdp_per_capita,0.09521279178094881
+urban_population_pct,0.09498933877433965
+tb_incidence_rate,0.09301961976812603
+nurses_per_10k,0.09279572101137915
+hospital_beds_per_10k,0.03369042652214722
+physicians_per_10k,0.03069411969724688
+dtp3_vaccination_coverage,0.030179547966094095
+pm25_air_pollution,0.02731739912031242
+health_expenditure_pct_gdp,0.022525315197850046
+pollution_health_risk_score,0.014560036320476763
+dtp3_yoy_pct_change,0.006294277738217952

@@ -1,0 +1,99 @@
+{% extends 'analytics/base.html' %}
+
+{% block title %}Country Health Explorer - Public Health System{% endblock %}
+
+{% block content %}
+<div class="main-header">
+    <h2 class="fw-bold mb-1"><i class="fa-solid fa-magnifying-glass me-2"></i>Country Health Profile & Indicator Explorer</h2>
+    <p class="mb-0 text-white-50">Granular national health intelligence, 5-dimensional capability radar profiling, and peer comparisons against regional medians.</p>
+</div>
+
+<!-- Country & Year Selector -->
+<div class="content-card">
+    <form method="GET" action="{% url 'country_explorer' %}" class="row g-3 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Select Sovereign Country:</label>
+            <select name="country" class="form-select">
+                {% for c in all_countries %}
+                <option value="{{ c }}" {% if c == chosen_country %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold text-secondary">Assessment Year: <span class="text-primary fw-bold">{{ chosen_year }}</span></label>
+            <input type="range" class="form-range" name="year" min="2000" max="2023" value="{{ chosen_year }}" oninput="this.previousElementSibling.firstElementChild.innerText = this.value">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                <i class="fa-solid fa-arrows-rotate me-1"></i> Inspect Country
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Country Stats Banner -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: #3b82f6;">
+            <div class="kpi-label">Life Expectancy</div>
+            <div class="kpi-value">{{ c_data.life_expectancy|floatformat:1 }} <span class="fs-6 text-muted">Yrs</span></div>
+            <small class="{% if delta_life >= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
+                {% if delta_life >= 0 %}+{% endif %}{{ delta_life }} vs Region
+            </small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: #ef4444;">
+            <div class="kpi-label">Under-5 Child Mortality</div>
+            <div class="kpi-value text-danger">{{ c_data.under_5_mortality_rate|floatformat:1 }} <span class="fs-6 text-muted">/1k</span></div>
+            <small class="{% if delta_u5 <= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
+                {% if delta_u5 > 0 %}+{% endif %}{{ delta_u5 }} vs Region
+            </small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: #10b981;">
+            <div class="kpi-label">Healthcare Capacity Index</div>
+            <div class="kpi-value text-success">{{ c_data.healthcare_access_score|floatformat:1 }} <span class="fs-6 text-muted">/100</span></div>
+            <small class="{% if delta_access >= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
+                {% if delta_access >= 0 %}+{% endif %}{{ delta_access }} vs Region
+            </small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: {% if c_data.risk_category_tier == 'High Risk' %}#ef4444{% elif c_data.risk_category_tier == 'Moderate Risk' %}#f59e0b{% else %}#10b981{% endif %};">
+            <div class="kpi-label">Risk Category Tier</div>
+            <div class="kpi-value {% if c_data.risk_category_tier == 'High Risk' %}text-danger{% elif c_data.risk_category_tier == 'Moderate Risk' %}text-warning{% else %}text-success{% endif %}">
+                {{ c_data.risk_category_tier }}
+            </div>
+            <small class="text-muted">{{ c_data.who_region }} &bull; {{ c_data.income_group }}</small>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-radar text-primary me-2"></i>Capability Radar vs. Regional Benchmark</h5>
+            <div id="radar-chart-container"></div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-timeline text-primary me-2"></i>Longitudinal Indicator Evolution (2000–2023)</h5>
+            <div id="history-chart-container"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const radarData = {{ radar_json|safe }};
+    Plotly.newPlot('radar-chart-container', radarData.data, radarData.layout, {responsive: true});
+
+    const histData = {{ history_json|safe }};
+    Plotly.newPlot('history-chart-container', histData.data, histData.layout, {responsive: true});
+</script>
+{% endblock %}

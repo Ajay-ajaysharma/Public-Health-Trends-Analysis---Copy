@@ -1,0 +1,59 @@
+{
+    "metadata_identifiers": [
+        "country",
+        "iso3",
+        "year",
+        "who_region",
+        "income_group",
+        "population"
+    ],
+    "primary_health_outcomes": [
+        "life_expectancy",
+        "under_5_mortality_rate",
+        "adult_mortality_rate",
+        "tb_incidence_rate",
+        "ncd_mortality_rate"
+    ],
+    "immunization_indicators": [
+        "dtp3_vaccination_coverage",
+        "measles_vaccination_coverage",
+        "dtp3_yoy_pct_change"
+    ],
+    "health_system_capacity": [
+        "physicians_per_10k",
+        "nurses_per_10k",
+        "hospital_beds_per_10k",
+        "health_expenditure_pct_gdp",
+        "health_expenditure_per_capita",
+        "healthcare_access_score",
+        "health_exp_normalized_income"
+    ],
+    "environmental_socioeconomic": [
+        "clean_water_sanitation_pct",
+        "pm25_air_pollution",
+        "pollution_health_risk_score",
+        "gdp_per_capita",
+        "urban_population_pct",
+        "education_index",
+        "low_vacc_high_pollution_flag"
+    ],
+    "longitudinal_engineered": [
+        "mortality_trend_3yr",
+        "mortality_trend_5yr",
+        "mortality_yoy_pct_change",
+        "tb_yoy_pct_change",
+        "mortality_rolling_avg_3yr",
+        "life_exp_rolling_avg_3yr",
+        "vaccination_to_disease_ratio",
+        "infrastructure_deficit_ratio",
+        "composite_vulnerability_score"
+    ],
+    "lag_features": [
+        "lag1_under_5_mortality",
+        "lag1_dtp3_vaccination",
+        "lag1_tb_incidence",
+        "lag1_life_expectancy"
+    ],
+    "prediction_target": "high_health_risk",
+    "categorical_target": "risk_category_tier"
+}

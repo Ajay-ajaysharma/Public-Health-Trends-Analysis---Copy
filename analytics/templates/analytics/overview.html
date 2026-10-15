@@ -1,0 +1,91 @@
+{% extends 'analytics/base.html' %}
+
+{% block title %}Global Overview & KPIs - Public Health System{% endblock %}
+
+{% block content %}
+<div class="main-header">
+    <h2 class="fw-bold mb-1"><i class="fa-solid fa-earth-americas me-2"></i>Global Public Health Surveillance Hub</h2>
+    <p class="mb-0 text-white-50">Empirical monitoring across 157 sovereign states over 24 years (2000–2023) integrating healthcare capacity, vaccination coverage, and environmental risk.</p>
+</div>
+
+<!-- KPI Cards Row -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: #3b82f6;">
+            <div class="kpi-label"><i class="fa-solid fa-heart-pulse text-primary me-1"></i> Global Life Expectancy</div>
+            <div class="kpi-value">{{ avg_life_exp }} <span class="fs-6 text-muted">Years</span></div>
+            <small class="text-muted">Mean across 157 states ({{ latest_year }})</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: #ef4444;">
+            <div class="kpi-label"><i class="fa-solid fa-baby text-danger me-1"></i> Under-5 Child Mortality</div>
+            <div class="kpi-value text-danger">{{ avg_u5_mort }} <span class="fs-6 text-muted">per 1k</span></div>
+            <small class="text-muted">WHO SDG 3.2 Target: &le;25 / 1k</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: #10b981;">
+            <div class="kpi-label"><i class="fa-solid fa-syringe text-success me-1"></i> DTP3 Immunization</div>
+            <div class="kpi-value text-success">{{ avg_dtp3 }}%</div>
+            <small class="text-muted">Global 1-year-old routine coverage</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card" style="border-left-color: #f59e0b;">
+            <div class="kpi-label"><i class="fa-solid fa-triangle-exclamation text-warning me-1"></i> High-Risk Sovereignties</div>
+            <div class="kpi-value text-warning">{{ high_risk_pct }}%</div>
+            <small class="text-muted">High disease/mortality risk tier</small>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <div class="col-lg-7">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-hospital-user text-primary me-2"></i>Regional Healthcare Access Capacity Index (0–100)</h5>
+            <div id="bar-chart-container"></div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="content-card">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-shield-virus text-primary me-2"></i>Global Sovereign Risk Tier Allocation ({{ latest_year }})</h5>
+            <div id="pie-chart-container"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Empirical Findings Section -->
+<div class="content-card">
+    <h5 class="fw-bold mb-3"><i class="fa-solid fa-lightbulb text-warning me-2"></i>Core Public Health Empirical Findings & Policy Discoveries</h5>
+    <div class="accordion" id="insightsAccordion">
+        {% for insight in insights %}
+        <div class="accordion-item mb-2 border rounded">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}">
+                    <i class="fa-solid fa-circle-check text-primary me-2"></i> {{ insight.title }}
+                </button>
+            </h2>
+            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#insightsAccordion">
+                <div class="accordion-body text-secondary" style="font-size: 0.95rem; line-height: 1.6;">
+                    {{ insight.finding }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Render Plotly Bar Chart
+    const barData = {{ bar_json|safe }};
+    Plotly.newPlot('bar-chart-container', barData.data, barData.layout, {responsive: true});
+
+    // Render Plotly Pie Chart
+    const pieData = {{ pie_json|safe }};
+    Plotly.newPlot('pie-chart-container', pieData.data, pieData.layout, {responsive: true});
+</script>
+{% endblock %}

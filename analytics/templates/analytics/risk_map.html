@@ -1,0 +1,45 @@
+{% extends 'analytics/base.html' %}
+
+{% block title %}Global Risk Map - Public Health System{% endblock %}
+
+{% block content %}
+<div class="main-header">
+    <h2 class="fw-bold mb-1"><i class="fa-solid fa-map-location-dot me-2"></i>Global Disease-Risk Choropleth World Map</h2>
+    <p class="mb-0 text-white-50">Interactive spatial visualization of epidemiological risk tiers, mortality burdens, and health capacity across sovereign territories.</p>
+</div>
+
+<!-- Map Layer Filter -->
+<div class="content-card">
+    <form method="GET" action="{% url 'risk_map' %}" class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label fw-semibold text-secondary">Select Map Indicator Layer:</label>
+            <select name="metric" class="form-select">
+                {% for k, lbl in metrics_list %}
+                <option value="{{ k }}" {% if k == map_metric %}selected{% endif %}>{{ lbl }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label class="form-label fw-semibold text-secondary">Temporal Slider: <span class="text-primary fw-bold">{{ map_year }}</span></label>
+            <input type="range" class="form-range" name="year" min="2000" max="2023" value="{{ map_year }}" oninput="this.previousElementSibling.firstElementChild.innerText = this.value">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                <i class="fa-solid fa-layer-group me-1"></i> Render Layer
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Map Container -->
+<div class="content-card">
+    <div id="choropleth-map-container" style="min-height: 600px;"></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const mapData = {{ map_json|safe }};
+    Plotly.newPlot('choropleth-map-container', mapData.data, mapData.layout, {responsive: true});
+</script>
+{% endblock %}
